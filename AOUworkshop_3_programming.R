@@ -4,7 +4,7 @@
 ##                            by - Matt Boone (2015)                           ##
 library (dplyr)
 library (ggplot2)
-setwd('C:/Users/Matt/Documents/workshop')
+
 #################################################################################
 # We're now moving into the real fun stuff
 # but first I need to teach you about some important functions you'll likely only use
@@ -26,7 +26,6 @@ if(2>1){print("You can do math")}    ## 2 is greater than 1, so it did what was 
 
 if(1>2){print("You can't do math")}   ##1 is not greater than 2 so it did nothing
 
-
 ##Say we want to figure out if a random number is greater than or less than 5
 
 tt<-sample.int(10,1)
@@ -45,14 +44,25 @@ if(tt>5){
 
 ##This can get complicated quickly
 
-if(tt>5){print('number is greater than 5')}else{if(tt<5){print('number is less than 5')}else{if(tt==5){print('number is 5')}}}   # this now adds the next possibility, if the number is not greater than 5, or less than 5, but instead equal than 5 then tell us that the number is infact 5
+ifelse(tt>5,print('number is greater than 5'),
+       ifelse(tt<5,print('number is less than 5'),
+          ifelse(tt==5,print('number is 5'))))   
+
+# this now adds the next possibility, if the number is not greater than 5, or less than 5, but instead equal than 5 then tell us that the number is infact 5
 ##the writing of this statement is a bit hard to get your head around
+
+data <- data.frame(a=1:10)
+
 
 ##pros of if statements: Can define exactly when to do something and when not to (control a situation), logical (by definition)
 ##cons of if statements: usually incorrectly used in R, make complicated statements
 ##IF STATEMENTS ARE BEST USED IN FOR LOOPS OR TO CHECK INPUTS. Controlling a situation
 ## note *** ifelse is an autmatic wrapper for ifelse statements, but generally leaves us with little else to do afterwards
-ifelse(data[,1]>5,paste('number is larger than 5'),ifelse(data[,1]<5,paste('number is not larger than 5'),paste('number is 5')))   #runs the same set of instrictions but automatically loops the if else statement through the 1st column of data
+ifelse(data[,1]>5,
+              paste('number is larger than 5'),
+                ifelse(data[,1]<5,
+                  paste('number is not larger than 5'),
+                    paste('number is 5')))   #runs the same set of instrictions but automatically loops the if else statement through the 1st column of data
 
 
 #############################################################
@@ -87,19 +97,21 @@ for(i in 1:10){print(data[i,2])}    ###loops through all the rows in column 2 (a
 for(i in 1:10){print(data[i,1]+5)}   ###loops through all the rows in column 1 and adds 5 to that value
 for(i in 1:10){data[i,2]<-data[i,1]+5}   ###does the same thing but stores the value in the correct row in column 2
 data
+
 ##this example works but is not technically right!!!!
 data[i,2]<- data[i,1]+5  ###is the best way to do this particular task
 
 #many functions can be vectorized, meaning r automatically loops things together
 paste0('hd',1:10)   ### automatically adds the numbers 1 through 10 onto the word 'hd'
+
 #############
 ## so while for loops are great and often logical, they often do things in a way that is inefficient
 ####################
 ###If and For loops are usually used in conjunction
+
 data[,1]
 
 for(i in 1:10){
-  
   if(data[i,1]>5){print(paste0(i,' is larger than 5'))}else{print(paste0(i,' is not larger than 5'))}
 }
 
@@ -120,21 +132,23 @@ data2<-data[i,1] + data[i,2]
 proc.time() - ptm
 
 # takes less than 1 second on my computer
+
+##pros of for loops: can reference previous entries (useful for certain analysis), more logical way of writing code, near the same speed for smaller vectors, allows for automation to increase effecienc
 ##
-##pros of for loops: can reference previous entries (useful for certain analysis), more logical way of writing code,
-##      near the same speed for smaller vectors, allows for automation to increase effeciency
-##
-##cons: processing time scales exponentially with vector length, harder to write when takes more than one for loop, 
-##      difficult to debug, not appropriate for most mathematical functions (This is not how R thinks!!
-## IF statments and for loops get abused in R a lot once they get taught, the reason is the base of many languages is
-# with these. And that's true in R, but most functions are written as for loops in C which is faster, and R
-# for loops are slow. R (S langauge) is written with the idea of linear algebra where things are done across vectors or matrixes
+##cons: processing time scales exponentially with vector length, harder to write when takes more than one for loop, difficult to debug, not appropriate for most mathematical functions (This is not how R thinks!!
+
+## IF statments and for loops get abused in R a lot once they get taught, the reason is the base of many languages is with these. And that's true in R, but most functions are written as for loops in C which is faster, and R for loops are slow. R (S langauge) is written with the idea of linear algebra where things are done across vectors or matrixes
+
 # Doing it this way is the fastest way to do any analysis in R.
+
 # This means if you can do things across an entire matrix, or vector, you should do it. I call this vectorizing, some one likely has a better name for it
-# # The most common use of for loops is when you're loading in different files, or for instance trying different starter values
+
+# The most common use of for loops is when you're loading in different files, or for instance trying different starter values
+
 ##############################
 # Summary of if and for loops
 #####################################################################
+
 ##-'for' loops are best to do tasks that can not be vectorized or when memory are an issue
 ##- 'for' loops are ideal for looping through files or starter values
 ##-'If' statements should only be used if vectorizing was not an option
@@ -143,6 +157,7 @@ proc.time() - ptm
 ##-Exceptions are when a function can not be vectorized or when referencing previous values
 ##-Also for lowering memory usage 
 #(If your files exceed 1.5gb looping or other packages may be requried)
+
 ###############################
 # Task
 #Here is a set of values. I want you to write a for loop that converts these to Farenheit and then prints out whether this value is
@@ -154,8 +169,7 @@ values<-c(30,25,6)
 
 for(i in values){
   d<-i*9/5 +32
-  print(d)
-  if(d<50){print(paste0(d,' degrees is cold'))}
+  ifelse(d<50,print(paste0(d,' degrees is cold')),print(d))
 }
 
 
@@ -182,8 +196,7 @@ for(i in values){
 temp_fun<-function(temp_values){
 for(i in temp_values){
   d<-i*9/5 +32
-  print(d)
-  if(d<50){print(paste0(d,' degrees is cold'))}
+  ifelse(d<50,print(paste0(d,' degrees is cold')), print(d))
   rm(temp_values)
 }}
    
@@ -191,6 +204,8 @@ for(i in temp_values){
 #this runs our for loop for whatever vector of values you want
 temp_fun(1)
 temp_fun(c(1:100))
+
+
 #################################################################################
 #Programming
 # Haven't we been programming this whole time?
@@ -210,16 +225,25 @@ temp_fun(c(1:100))
 # an easy example is always running tolower(), as often capitalization can get mixed up
 # This also goes for row names. 
 
-head(mtcars)
+mtcars %>% head
+
 row.names(mtcars)=='Pontiac Firebird'
+
 colnames(mtcars)=='mpg'
 
-mtcars[row.names(mtcars)=='Pontiac Firebird','mpg'] # as opposed to
+mtcars %>%
+  add_rownames(var="model") %>%
+  filter(model=='Pontiac Firebird') %>%
+  select(mpg)
+
+# instead of 
+
 mtcars[25,1]
 
 # one reason for this is that columns are out of order, or when you merge data sets
 # and column numbers change, or you simply add more data. It's safer just to refer to it in this manner.
 # If you need to do math on column numbers you can still do that with which()
+
 which(row.names(mtcars)=='Pontiac Firebird') - 1   ##gives us the row just before Pontiac Firebird
 
 #Task.
@@ -236,14 +260,20 @@ which(row.names(mtcars)=='Pontiac Firebird') - 1   ##gives us the row just befor
 # Bonus points if you can figure out how to do it dplyr instead of base R
 
 data<-read.csv('ebird/Ebird_DE.csv')
-head(data)
+
+data %>% head
 
 data[data$breeder==1 & data$passerine==1,grepl('^X',colnames(data))]
 
-result<-apply(data[data$breeder==1 & data$passerine==1,grepl('^X',colnames(data))],2,mean)
+result <- data %>% 
+            filter(breeder==1,
+                    passerine==1) %>%
+            select(contains('X')) %>%
+            gather("quarter_month","value")
 
-plot(result, type='l',xaxt='n',ylab='prevelance', xlab='quarter month')
-axis(1,1:48,colnames(data)[grepl('^X',colnames(data))])
+
+ggplot(data=result, aes(x=quarter_month, y=value)) + geom_point()
+
 
 # 2. Make a dynamic and static variable list at the header of a code. This is essentially what
 # we input in a function()
@@ -326,6 +356,8 @@ for(i in name){
   }  ##end p loop
   
 }   ###end i loop
+
+summary(our.list)
 
 # notice how not only are the end brackets labeled but we're keeping the loops indented appropriately to show that one is nested inside of the other
 
