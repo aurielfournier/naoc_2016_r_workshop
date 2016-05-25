@@ -1,11 +1,11 @@
 #################################################################################
 ##          The Power of Automation  and Programming                           ##
 #################################################################################
-##                            by - Matt Boone (2015)                           ##
+##  by - Matt Boone (2015) modified by Auriel Fournier (2016)                  ##
 library (dplyr)
 library (ggplot2)
 
-#################################################################################
+##############################################################################
 # We're now moving into the real fun stuff
 # but first I need to teach you about some important functions you'll likely only use
 # when you start getting serious in R
@@ -54,9 +54,13 @@ ifelse(tt>5,print('number is greater than 5'),
 data <- data.frame(a=1:10)
 
 
-##pros of if statements: Can define exactly when to do something and when not to (control a situation), logical (by definition)
-##cons of if statements: usually incorrectly used in R, make complicated statements
+##pros of if statements: 
+# Can define exactly when to do something and when not to (control a situation), logical (by definition)
+##cons of if statements: 
+# usually incorrectly used in R, make complicated statements
+
 ##IF STATEMENTS ARE BEST USED IN FOR LOOPS OR TO CHECK INPUTS. Controlling a situation
+
 ## note *** ifelse is an autmatic wrapper for ifelse statements, but generally leaves us with little else to do afterwards
 ifelse(data[,1]>5,
               paste('number is larger than 5'),
@@ -125,7 +129,7 @@ ptm <- proc.time()
 for(i in 1:10000000){data2<-data[i,1]+data[i,2]}
 proc.time() - ptm
 
-#takes 10 seconds on my computer
+#takes 14 seconds on my computer
 
 ptm<-proc.time()
 data2<-data[i,1] + data[i,2]
@@ -135,6 +139,7 @@ proc.time() - ptm
 
 ##pros of for loops: can reference previous entries (useful for certain analysis), more logical way of writing code, near the same speed for smaller vectors, allows for automation to increase effecienc
 ##
+
 ##cons: processing time scales exponentially with vector length, harder to write when takes more than one for loop, difficult to debug, not appropriate for most mathematical functions (This is not how R thinks!!
 
 ## IF statments and for loops get abused in R a lot once they get taught, the reason is the base of many languages is with these. And that's true in R, but most functions are written as for loops in C which is faster, and R for loops are slow. R (S langauge) is written with the idea of linear algebra where things are done across vectors or matrixes
@@ -162,6 +167,7 @@ proc.time() - ptm
 # Task
 #Here is a set of values. I want you to write a for loop that converts these to Farenheit and then prints out whether this value is
 # cold depending on if the resulting value is less than 50 degrees farenheit. 
+# this is because Matt, who wrote this, is from Texas, and hates cold
 # The function for this conversion is C*(9/5) +32
 # use : for, if, print, and paste0
 
@@ -193,6 +199,7 @@ for(i in values){
 # up a little different. Just know every thing we write in long form can be 
 # written as a function easily by just placing our variables in between the function() parenthesis
 #
+
 temp_fun<-function(temp_values){
 for(i in temp_values){
   d<-i*9/5 +32
@@ -224,6 +231,8 @@ temp_fun(c(1:100))
 # but may require that we clean our data so that our column names are what we think they are
 # an easy example is always running tolower(), as often capitalization can get mixed up
 # This also goes for row names. 
+
+library(dplyr)
 
 mtcars %>% head
 
@@ -493,7 +502,6 @@ result<-CI.fun(1:10,.95)
 #http://ebird.org/ebird/BarChart?cmd=getChart&displayType=download&getLocations=states&states=US-OK&bYear=1900&eYear=2015&bMonth=1&eMonth=12&reportType=location&parentState=US-OK
 
 #using the download.file() how can we get it to download the file we want, no matter the input?
-setwd('C:/Users/Matt/Documents/workshop/ebird')
 states<-'OK'
 years<-2008
 
