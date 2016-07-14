@@ -12,33 +12,9 @@ library(ggplot2)
 ### What is R?
 #################
 
-# R is a language developed from the S programming language. It is a under GNU general public licensing
-# It is written in mainly in C and fortran
-# The creator of R has said he hopes to teach scientists to program
-#
+# R is a language developed from the S programming language. 
+# We're assuming some level of knowning how to use R, here we'll introduce you to some tools that might be familiar but we think are key to managing data, and being efficinet in analysis in R
 
-##############
-#
-# list a collection of various data structures. It's like a tacklebox. You can carry the tacklebox 
-# together, but its compartmentalized. 
-#
-list1<-list(id=1:10,matr=matrix(1:100,nrow=10,ncol=10),df=data.frame(id=1:10,name=rep(c('a','b'),10)))
-
-str(list1[[2]])  ##when you refer to it like this its output is a dataframe
-str(list1[2])  ## when you call it with this it returns a list
-
-list1$id   ##but you can still call them with the $
- 
-###the majority of work is done with data frames and lists. Lists are useful because they're not stored in RAM the same way data.frames are. Dataframes are stored as one big memory piece and everytime you need to append it
-# it must allocate RAM for the large block, which can eventually lead to whats called a memory leak.
-# This is one of the reasons we use lists. Think of lists as giant storage boxes. You can pull from lists as needed
-# and do whats necessary. They're endlessly deep though, so you can easily get lost if you start building lists inside of lists. They're great for storing multiple files, and keeping things organized
-list1[[3]][1,1]  #refers to the 1st row, 1st column, of the 3rd object in list1.
-
-###############################################################
-# common phrases in r
-# symbols
-# - symbol can subtract in my different ways
 
 
 ###subsetting
@@ -47,8 +23,7 @@ list1[[3]][1,1]  #refers to the 1st row, 1st column, of the 3rd object in list1.
 # This becomes one of the more complicated tasks in R, as large subsetting can get confusing.
 # There's three ways to subset, base subset, subset function, and dplyr.
 # base subsetting is more or less the base of the other two functions.
-# We'll first go into subset(). This function is simple and it does a very simple thing
-library(gapminder)
+# We'll first go into filter(). This function is simple and it does a very simple thing
 data(gapminder)
 head(gapminder)   
 
@@ -61,34 +36,20 @@ test<- gapminder %>%
 head(test)
 
 # that easy, it does exactly what we want, it's fairly logical
-# say you want to take out rows
+# say you want to take out columns
 test<- gapminder %>%
           filter(continent=='Europe', 
                  year==1987) %>% 
           select(-continent, -pop)  ## remember - means subtract
 test
 
-##The syntax to base subset works very similar to this. It's basically set on the premises of feeding the dataframe
-# a string of T, F where T is a variable it wants to keep, and F is one its going to ignore. But
-# this process can be complicated to imagine
-
-
-##############
-# & (means to evalute the T F together)
 
 gapminder %>%
       filter(continent=="Europe"|continent=="Asia") # | means 'or' its the key above enter
 
-gapminder %>%
-      filter(continent=="Europe"|continent=="Asia",
-             year==1987)
 
 test <- gapminder %>%
-          filter(continent=="Europe"|continent=="Asia",
-                 year==1987) %>%
-          select(country, lifeExp, gdpPercap)
-
-
+          filter(year>=1987&year<=2002) 
 
 
 ###########
