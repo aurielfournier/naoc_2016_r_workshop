@@ -8,161 +8,171 @@ library(gapminder)
 library(dplyr)
 library(ggplot2)
 
-#################
-### What is R?
-#################
+###################
+## Loading In The Data
+####################
 
-# R is a language developed from the S programming language. 
-# We're assuming some level of knowning how to use R, here we'll introduce you to some tools that might be familiar but we think are key to managing data, and being efficinet in analysis in R
-
-
-
-###subsetting
-# one of the big tasks in R is subsetting. Once you can subset properly you can slice your data either for analysis
-# or processing and transforming data
-# This becomes one of the more complicated tasks in R, as large subsetting can get confusing.
-# There's three ways to subset, base subset, subset function, and dplyr.
-# base subsetting is more or less the base of the other two functions.
-# We'll first go into filter(). This function is simple and it does a very simple thing
 data(gapminder)
 head(gapminder)   
 
-# say we want to look at the life expectancy of just European countries in 1987, and we only 
-# want to look at life Exp and gdpPercap
+
+#########################
+## Filtering
+#########################
+
 test<- gapminder %>%
         filter(continent=='Europe',
-               year==1987) %>% 
-        select(country,lifeExp,gdpPercap)
-head(test)
+               year==1987) 
+summary(test)
 
-# that easy, it does exactly what we want, it's fairly logical
-# say you want to take out columns
+
 test<- gapminder %>%
-          filter(continent=='Europe', 
-                 year==1987) %>% 
-          select(-continent, -pop)  ## remember - means subtract
-test
+  filter(continent=='Europe',
+         year==1987) %>% 
+        select(country,lifeExp,gdpPercap)
+summary(test)
 
+# the "|" means 'or' in R
+test <- gapminder %>%
+      filter(continent=="Europe"|continent=="Asia") 
 
-gapminder %>%
-      filter(continent=="Europe"|continent=="Asia") # | means 'or' its the key above enter
+# the "&" means "and" in R
+test <- gapminder %>%
+          filter(year>=1987&year<=2002) 
+summary(test)
+
+#########################
+# Match
+# %in%   
+#########################
+
+sub_countries <- c("Afghanistan","Australia", "Zambia")
 
 
 test <- gapminder %>%
-          filter(year>=1987&year<=2002) 
+          filter(country %in% sub_countries)
+
+#########################
+## GROUPING
+#########################
+
+gapminder %>%
+  group_by(continent) %>%
+  summarize(mean=mean(lifeExp))
 
 
-###########
-# Match
-# %in%   #the original match() function was rewritten to %in%
-
-#find all the variables in 'this' that are also in 'that'
-this<-c("a","b","c","d")
-that<-c("d","e")
-
-this %in% that  ### should be read as, find all the moments where THIS is equal to THAT. It returns T/F of where this 1:10 equals 1 or 2. If we feed this back into our vector THIS it shows us the numbers themselves
-
-this[this %in% that]   
-
-that %in% this
-
-that[that %in% this]  ###we can do it the other way around, and it shows us the same two numbers ofcourse. It is where the two vectors have in common
-# %in% is essentially the same as stringing a bunch of 'or' statements together. In this case we are saying:
-
-#dplyr does this with the function intersect, however this doesnt give us T/F it only shows us the values they have in common
-intersect(this,that)
-
-#which can be used to show us at what location the two are common
-which(this %in% that)    
-
-#############################
-#grouping
-#############################
-# Lets look at how to do analysis on grouped data in base R
-# Base R grouping
-
-data<-read.csv('rail_data.csv', stringsAsFactors = FALSE)
-data
-
-#lets subset our data into two dataframes for ease in this example. 
-data1<-data %>% select(wingchord, culmen, tarsus)    #a data frame called data1
-grouping<- data %>% select(genera, migratory)  #and our grouping variables called grouping
-
-# tapply runs a function on a vector based on a set of groupings we feed it
-# tapply(vector, grouping vector, function)
-
-data %>%
-  group_by(genera) %>%
-  summarize(mean(wingchord))
+gapminder %>% 
+  group_by(continent, year) %>%
+  summarize(mean=mean(lifeExp))
 
 
-data %>% 
-  group_by(genera, migratory) %>%
-  summarize_each(funs(mean))
+#########################################
+## CHALLENGE
+#########################################
+
+# What is the median life expenctancy and population for each country in Asia in 1988
 
 
-#Simple functions
-#paste
+
+#########################
+## MUTATE
+#########################
+
+
+
+
+
+########################
+## Separate
+########################
+
+########################
+## Joins
+########################
+
+
+
+#####################################
+## CHALLENGE
+#####################################
+
+# Calculate the average life expectancy in 2002 of 2 randomly selected countries for each continent. Then arrange the continent names in reverse order. Hint: Use the dplyr functions arrange() and sample_n(), they have similar syntax to other dplyr functions.
+
+
+
+########################
+## Dates and Times
+########################
+
+#########dates and times#############################
+
+# We're first going to need to tackle dates. R can handle dates, and it can be quite powerful, but a bit annoying.
+# The base functions for this are as.Date, as.POSIXct, as.POSIXlt
+# The syntax for these is essentially the same, feed it a date, and tell it the format
+
+Sys.time()
+
+## Good Resource on what letters = what in format
+# https://stat.ethz.ch/R-manual/R-devel/library/base/html/strptime.html
+
+dt<-as.Date(Sys.time(),format='%Y-%m-%d')
+ct<-as.POSIXct(Sys.time(),format='%Y-%m-%d %H%M%D')
+lt<-as.POSIXlt(Sys.time(),format='%Y-%m-%d %H%M%D')
+
+# whats great is we can now do math on time
+
+dt-10   ##since day is the lowest measurement it counts in days
+ct-10   ##however counts in seconds
+lt-10   ##does the same thing
+
+# as.POSIXlt is really useful because it allows you to call particular pieces of the time out
+lt$yday   ##julian date
+lt$hour   ##hour
+lt$year   ##what.....time since 1900???
+lt$year+1900  ##converts you to standard time
+
+##these are particularly useful because you can do math on time
+earlytime<-as.POSIXct('2015-03-23',format='%Y-%m-%d')
+
+ct - earlytime 
+
+##as well as logical statements
+ct > earlytime
+ct == earlytime
+
+
+#########################
+## Paste Functions
+#########################
+
 # paste strings any data classes together into one long character string, each seperated by a space
 
-name<-'Matt'
-paste('Hello, world. My name is',name )    # pastes the phrase, 'hellow world my name is', with our object name, which we stored as Matt
-
-version<-2.1
+name<-'Auriel'
+paste('Hello, world. My name is',name )   
 
 # this is useful for error messages
-paste0(name,'_',version,' was not found')
-paste0(name,'_',version,' was not found, please try ', version-1 )  # notice we can still do math on things. R evaluates from the inside of a function outward.
-#its also useful to add numbers to the end, it will also recycle as necessary
-paste0(name,1:10) 
+paste0(name,'_',Sys.Date())
 
-###################
-# apply functions
-# an apply function is a prewrapped function that loops across data sets. Which makes no sense ofcourse
-# You can think of apply functions as R's replacement for excels core functionality and pivot tables
-
-data<-data.frame(matrix(1:100, nrow=10,ncol=10))
-data
-#apply does some function across the rows or columns of a data set
-
-
-apply(data,1,mean)  #1 tells it to run a function across the rows
-apply(data,2,mean)  #2 tells it to run a function down the columns
-data
-
-
-
-data/apply(data,1,sum)   # we can then feed these values back to our dataframe to calculate proportions for example
-apply(data/apply(data,1,sum),1,sum)  ##proof that it calculated the proportion (these values would not equal 1 otherwise)
-
-#now lets check out doing this doing the columns
-test<-data/apply(data,2,sum)
-apply(test,2,sum)   ## this didnt work, why?
-
-#it didnt work because R runs the multiply or divide function across each column, but we wanted down the rows
-
-#transposing, flips dataframes on their diagonal, so rows beecome columns and column become rows
-t(data)
-test<-t(t(data)/apply(data,2,sum))   # is sadly how we would actually do this, flipping it, doing the math, then flipping it back
-apply(test,2,sum)
-
-apply(data,1,prop.table)   #is ofcourse how you actually do this
-
+paste0(name,'_',Sys.Date(),'_',1:10) 
 
 ####################
 #grepl searches for an entry in a vector
-grep('United',gapminder$country)   #this searches for the term 'United' in each word in our country vector
-gapminder[grep('United',gapminder$country),]    # we can feed this back to our data frame to see all countries that contain the word United (case sensitive)
+grepl('Af',gapminder$country)   
 
-# adding the ^ tells R to search were the character string STARTS with something
-grep('^Af',gapminder$country)   #searches for countries that START with Af
+#this searches for the term 'United' in each word in our country vector
 
-grepl('^Af',gapminder$country)    # tells us the T/F version of this
+test <- gapminder %>%
+    filter(grepl('Af',gapminder$country))
+summary(test)
 
-gapminder[grepl('^Af',gapminder$country),]
-##compared to
-gapminder[grepl('Af',gapminder$country),]
-# It's the base R way of searching and doing character matching, it will be extremely useful
-# in the future when we start trying to make things flexible and reproducible. Google regExpr to 
-# get other complex character searches we can do
+test <- gapminder %>%
+  filter(grepl('^Af',gapminder$country))
+summary(test)
+
+#####################################
+## CHALLENGE
+#####################################
+
+## Median and Mean Life Exp for all Countiries that being with "Ma" for the years 1990-1997 
+
 
