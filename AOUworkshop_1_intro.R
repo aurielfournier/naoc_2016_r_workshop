@@ -8,6 +8,8 @@ library(gapminder)
 library(dplyr)
 library(ggplot2)
 
+data(gapminder)
+
 #################
 ### What is R?
 #################
