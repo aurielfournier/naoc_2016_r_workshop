@@ -22,7 +22,7 @@ library(gapminder) #
 
 library("ggplot2")
 ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
-geom_point()```
+geom_point()
 
 #So the first thing we do is call the `ggplot` function. This function lets R
 #know that we're creating a new plot, and any of the arguments we give the
