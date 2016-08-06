@@ -74,36 +74,49 @@ ifelse(data[,1]>5,
 #############################################################
 ##an iterative process that loops through a sequence
 
-for(i in 1:10){ print(i) }   ###what did this do?
+for(i in 1:10){ 
+  print(i) 
+}   ###what did this do?
 
 # it wrapped through all values between 1 and 10...
 for(i in 1:10){
   #stores the value as the variable i (or any variable name we told it to)
   i<-1
-  
   #and then runs EVERYTYHING between the brackets with the variable as that value
   print(i) 
-  
   }
 # it then does this for the 1st value, then the 2nd, and so on until all values have been looped through
 
 # because all its doing is storing the value as the variable i (again it can be named anything) we can do anything
 #to this variable like we normally would. 
-for(i in 1:10){print(i+1)}  ## in this case we want to add 1 to that value. So it took 1 and added 1 (equals 2), then took the next value (2) and added 1 (equals 3) so on and so on.
+for(i in 1:10){
+  print(i+1)
+  }  ## in this case we want to add 1 to that value. So it took 1 and added 1 (equals 2), then took the next value (2) and added 1 (equals 3) so on and so on.
 
 #####
 ## for loops are useful for refering to rows or columns in a data set if we just feed it sequential numbers
 data<-matrix(1:100,nrow=10,ncol=10)
 data
 
-for(i in 1:10){print(data[i,1])}    ### is going to loop through all the rows in column 1 (and print that value)
-for(i in 1:10){print(data[i,2])}    ###loops through all the rows in column 2 (and prints that value)
-for(i in 1:10){print(data[i,1]+5)}   ###loops through all the rows in column 1 and adds 5 to that value
-for(i in 1:10){data[i,2]<-data[i,1]+5}   ###does the same thing but stores the value in the correct row in column 2
+for(i in 1:10){
+  print(data[i,1])
+}    ### is going to loop through all the rows in column 1 (and print that value)
+
+for(i in 1:10){
+  print(data[i,2])
+}    ###loops through all the rows in column 2 (and prints that value)
+
+for(i in 1:10){
+  print(data[i,1]+10)
+}   ###loops through all the rows in column 1 and adds 5 to that value
+
+for(i in 1:10){
+  data[i,2]<-data[i,1]+10
+}   ###does the same thing but stores the value in the correct row in column 2
+
 data
 
-##this example works but is not technically right!!!!
-data[i,2]<- data[i,1]+5  ###is the best way to do this particular task
+data[,2]<- data[,1]+10  ###is the best way to do this particular task
 
 #many functions can be vectorized, meaning r automatically loops things together
 paste0('hd',1:10)   ### automatically adds the numbers 1 through 10 onto the word 'hd'
@@ -111,6 +124,7 @@ paste0('hd',1:10)   ### automatically adds the numbers 1 through 10 onto the wor
 #############
 ## so while for loops are great and often logical, they often do things in a way that is inefficient
 ####################
+
 ###If and For loops are usually used in conjunction
 
 data[,1]
