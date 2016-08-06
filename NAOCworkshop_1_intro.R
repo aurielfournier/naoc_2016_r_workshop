@@ -162,11 +162,11 @@ grepl('Af',gapminder$country)
 #this searches for the term 'United' in each word in our country vector
 
 test <- gapminder %>%
-    filter(grepl('Af',gapminder$country))
+    filter(grepl("Af", country))
 summary(test)
 
 test <- gapminder %>%
-  filter(grepl('^Af',gapminder$country))
+  filter(grepl('^Af',country))
 summary(test)
 
 #####################################
