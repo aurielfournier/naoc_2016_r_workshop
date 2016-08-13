@@ -1,11 +1,14 @@
 ###Introduction and refreshers for R
 # by - Matt Boone (2015) & Auriel Fournier (2015)
-# Modified by Auriel Fournier for 2016 Biometry Course U of A
-
+# Modified by Auriel Fournier for 2016 NAOC Workshop
 
 ####################################
+# Necessary packages
+####################################
+
 library(gapminder)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 
 ###################
@@ -14,7 +17,6 @@ library(ggplot2)
 
 data(gapminder)
 head(gapminder)   
-
 
 #########################
 ## Filtering
@@ -42,8 +44,7 @@ test <- gapminder %>%
 summary(test)
 
 #########################
-# Match
-# %in%   
+# Match     %in%   
 #########################
 
 sub_countries <- c("Afghanistan","Australia", "Zambia")
@@ -78,7 +79,14 @@ gapminder %>%
 ## MUTATE
 #########################
 
+(mgap <- gapminder %>% 
+  mutate(country_continent = paste0(country,"_",continent)) %>%
+   select(year, lifeExp, pop, gdpPercap, country_continent))
 
+# or
+
+gapminder %>%
+  mutate(example = ifelse(country == "United States","Yes","No"))
 
 
 
@@ -86,9 +94,47 @@ gapminder %>%
 ## Separate
 ########################
 
+mgap %>% 
+  separate(country_continent, sep="_", into=c("country","continent"))
+
+# or
+
+mgap %>% 
+  separate(year, sep=-3, into=c("century","year"))
+
 ########################
 ## Joins
 ########################
+
+# for no reason other than the awesomeness of star wars we are going to join our data set with another dataset indicating whether or not star wars had bene released yet in that year
+
+new_dat <- data.frame(year=c(unique(gapminder$year)[2:10],2012), star_wars_released=c("No","No","No","No","YES","YES","YES","YES","YES","YES"))
+
+# you will notice this does not include 1952, 2002 and 2007
+
+(fully_joined <- full_join(gapminder, new_dat, by="year"))
+
+unique(fully_joined$year)
+
+# we have everything, and NAs are inserted for years where things don't exist
+
+(only_right_joined <- right_join(gapminder, new_dat, by="year"))
+
+unique(only_right_joined$year)
+
+# notice taht 1952, 2002, 2007 are missing, bc they don't exist in new_dat
+
+(only_left_joined <- left_join(gapminder, new_dat, by="year"))
+
+unique(only_left_joined$year)
+
+# notice that 2012 is missing, bc it doesn't exist in gapminder
+
+(inner_joined_only <- inner_join(gapminder, new_dat, by="year"))
+
+unique(inner_joined_only$year)
+
+# only things that are in common
 
 
 
