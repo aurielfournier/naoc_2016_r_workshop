@@ -4,6 +4,7 @@
 ##  by - Matt Boone (2015) modified by Auriel Fournier (2016)                  ##
 library (dplyr)
 library (ggplot2)
+library(tidyr)
 
 ##############################################################################
 # We're now moving into the real fun stuff
@@ -53,7 +54,6 @@ ifelse(tt>5,print('number is greater than 5'),
 
 data <- data.frame(a=1:10)
 
-
 ##pros of if statements: 
 # Can define exactly when to do something and when not to (control a situation), logical (by definition)
 ##cons of if statements: 
@@ -67,7 +67,6 @@ ifelse(data[,1]>5,
                 ifelse(data[,1]<5,
                   paste('number is not larger than 5'),
                     paste('number is 5')))   #runs the same set of instrictions but automatically loops the if else statement through the 1st column of data
-
 
 #############################################################
 ##                      for loops                          ##
@@ -121,49 +120,6 @@ data[,2]<- data[,1]+10  ###is the best way to do this particular task
 #many functions can be vectorized, meaning r automatically loops things together
 paste0('hd',1:10)   ### automatically adds the numbers 1 through 10 onto the word 'hd'
 
-#############
-## so while for loops are great and often logical, they often do things in a way that is inefficient
-####################
-
-###If and For loops are usually used in conjunction
-
-data[,1]
-
-for(i in 1:10){
-  if(data[i,1]>5){print(paste0(i,' is larger than 5'))}else{print(paste0(i,' is not larger than 5'))}
-}
-
-# this process runs through rows 1 through 10 of the 1st column of our data frame called data and tells us whether that value was greater than or less than 5. 
-
-##exponentially slows down as iterations increase
-# be careful running this example if your computer is knowing for being slow
-data<-matrix(1:20000000,nrow=10000000,ncol=2) #(10 million entries and 20 million rows!!!)
-
-ptm <- proc.time()
-for(i in 1:10000000){data2<-data[i,1]+data[i,2]}
-proc.time() - ptm
-
-#takes 14 seconds on my computer
-
-ptm<-proc.time()
-data2<-data[i,1] + data[i,2]
-proc.time() - ptm
-
-# takes less than 1 second on my computer
-
-##pros of for loops: can reference previous entries (useful for certain analysis), more logical way of writing code, near the same speed for smaller vectors, allows for automation to increase effecienc
-##
-
-##cons: processing time scales exponentially with vector length, harder to write when takes more than one for loop, difficult to debug, not appropriate for most mathematical functions (This is not how R thinks!!
-
-## IF statments and for loops get abused in R a lot once they get taught, the reason is the base of many languages is with these. And that's true in R, but most functions are written as for loops in C which is faster, and R for loops are slow. R (S langauge) is written with the idea of linear algebra where things are done across vectors or matrixes
-
-# Doing it this way is the fastest way to do any analysis in R.
-
-# This means if you can do things across an entire matrix, or vector, you should do it. I call this vectorizing, some one likely has a better name for it
-
-# The most common use of for loops is when you're loading in different files, or for instance trying different starter values
-
 ##############################
 # Summary of if and for loops
 #####################################################################
@@ -179,8 +135,9 @@ proc.time() - ptm
 
 ###############################
 # Task
-#Here is a set of values. I want you to write a for loop that converts these to Farenheit and then prints out whether this value is
-# cold depending on if the resulting value is less than 50 degrees farenheit. 
+#Here is a set of values. I want you to write a for loop that converts these to Farenheit 
+# and then prints out whether this value is cold depending on if the resulting value is less 
+# than 50 degrees farenheit. 
 # this is because Matt, who wrote this, is from Texas, and hates cold
 # The function for this conversion is C*(9/5) +32
 # use : for, if, print, and paste0
@@ -211,7 +168,8 @@ for(i in values){
 # easily run a long piece of code that's wrapped in a function
 # Writing a piece of code and a function are nearly identical in thought, but are set
 # up a little different. Just know every thing we write in long form can be 
-# written as a function easily by just placing our variables in between the function() parenthesis
+# written as a function easily by just placing our variables in between the 
+# function() parenthesis
 #
 
 temp_fun<-function(temp_values){
@@ -245,17 +203,11 @@ temp_fun(c(1:100))
 # but may require that we clean our data so that our column names are what we think they are
 # an easy example is always running tolower(), as often capitalization can get mixed up
 # This also goes for row names. 
-
-library(dplyr)
-
-mtcars %>% head
-
-row.names(mtcars)=='Pontiac Firebird'
-
-colnames(mtcars)=='mpg'
+data(mtcars)
+head(mtcars)
 
 mtcars %>%
-  add_rownames(var="model") %>%
+  tibble::rownames_to_column(var="model") %>% ## if you want to call a function from a particular package use package::function
   filter(model=='Pontiac Firebird') %>%
   select(mpg)
 
@@ -282,13 +234,13 @@ which(row.names(mtcars)=='Pontiac Firebird') - 1   ##gives us the row just befor
 # which(), colnames(), grepl(). 
 # Bonus points if you can figure out how to do it dplyr instead of base R
 
-data<-read.csv('ebird/Ebird_DE.csv')
+dat <- read.csv('~/naoc_2016_r_workshop/ebird_data.csv')
 
-data %>% head
+dat %>% head
 
-data[data$breeder==1 & data$passerine==1,grepl('^X',colnames(data))]
+dat[dat$breeder==1 & dat$passerine==1,grepl('^X',colnames(dat))]
 
-result <- data %>% 
+result <- dat %>% 
             filter(breeder==1,
                     passerine==1) %>%
             select(contains('X')) %>%
@@ -297,7 +249,6 @@ result <- data %>%
 
 ggplot(data=result, aes(x=quarter_month, y=value)) + 
   geom_point()
-
 
 
 # 2. Make a dynamic and static variable list at the header of a code. This is essentially what
@@ -322,13 +273,11 @@ name<-'Matt'
 paste0('hello, ',name,' how are you?')
 
 ##we can write this as a function easily
-foo<-function(name){paste0('hello,',name,' how are you')}
+foo<-function(name){paste0('hello, ',name,' how are you')}
 foo(name='matt')
-foo('matt')
 # that was a tangent, lets move forward
 
 ## lets read in file names
-
 folder<-'Monstersinc'
 file<-'scaretotal_MikeW_March.csv'
 
@@ -347,13 +296,12 @@ read.csv(paste0(folder,'/',file))
 #file2: scaretotal_JamesS_March.csv
 #file3: scaretotal_MikeW_April.csv
 #file4  scaretotal_JamesS_April.csv
-setwd('Monstersinc')
 
 name<-'MikeW'
 month<-'March'
 
 ####read in this file
-data<-read.csv(paste0('scaretotal_',name,'_',month,'.csv'))
+data<-read.csv(paste0(folder,'/','scaretotal_',name,'_',month,'.csv'))
 
 # 4. Keep your brackets in order, and label them if necessary
 ##Lets do the same, but now lets write a loop function that loads all
@@ -376,7 +324,7 @@ for(i in name){
   
   for(p in month){
     
-    our.list[[paste0(i,'_',p)]]<-read.csv(paste0('scaretotal_',i,'_',p,'.csv'))
+    our.list[[paste0(i,'_',p)]]<-read.csv(paste0(folder,'/','scaretotal_',i,'_',p,'.csv'))
     
   }  ##end p loop
   
@@ -384,7 +332,9 @@ for(i in name){
 
 summary(our.list)
 
-# notice how not only are the end brackets labeled but we're keeping the loops indented appropriately to show that one is nested inside of the other
+# notice how not only are the end brackets labeled 
+# but we're keeping the loops indented appropriately to show that one is nested inside of the other
+# this is not _required_ by R, but it does make things easier. 
 
 # 5. Start simple, and build to more complex. Don't think about the big picture
 # think about the individual steps. If you can do each individual step, then you
@@ -431,7 +381,7 @@ data<-c(1:10)   ###data as a vector
 ci<-.01         ###confidence
 ########################################
 ##start of code
-  if(ci>abs(1)){print("You can't have a probability greater than 1 stupid!")}else{
+  if(ci>abs(1)){print("You can't have a probability greater than 1 you goof!")}else{
     sd.data<-sd(data)
     
     n<-length(data)
@@ -455,7 +405,7 @@ ci<-.01         ###confidence
 #or we can make it into a function
 ###
 CI.fun<-function(data,ci){
-  if(ci>abs(1)){print("You can't have a probability greater than 1 stupid!")}else{
+  if(ci>abs(1)){print("You can't have a probability greater than 1 you goof!")}else{
   sd.data<-sd(data)
   
   n<-length(data)
@@ -475,8 +425,8 @@ CI.fun<-function(data,ci){
   }}
 
 ##and now we can feed it whatever data vector and confidence interval we want
-result<-CI.fun(1:100,.95)    ##try it with a data vector of all integers between 1 and 100
-result<-CI.fun(sample.int(100,20),.95)   ###try it with a data vector of 20 random numbers
+CI.fun(1:100,.95)    ##try it with a data vector of all integers between 1 and 100
+CI.fun(sample.int(100,20),.95)   ###try it with a data vector of 20 random numbers
 
 ##whatever data vector we give it, as long as they are real numbers, it will give us an answer
 # lets not forget our error message
@@ -492,87 +442,3 @@ CI.fun<-function(data,ci){
     print(list1)
 }
 result<-CI.fun(1:10,.95)
-#######################
-###Finally, what can we do with this? let's work together to build something great.
-# So there's this nifty trick that happens often on the internet, and that is that
-# website will have url will change based on the input of them. What it's actually doing
-# is sending a queery to a data base and returning a product. Let me give you an example of sites that allow this
-# eBird - http://ebird.org/ebird/GuideMe?cmd=changeLocation
-# radiosondes - http://weather.uwyo.edu/upperair/sounding.html
-###################################################################
-######So here is what I want to do. I want to create a program that automatically downloads
-# eBird prevalence's  and saves them for a variety of states and time periods.
-###################################################################
-###let's start by creating our variable header
-###################################################################
-##                     our awesome program                       ##
-###################################################################
-# We'll start by just trying to get it to download one file
-#Variables
-##################################################################
-#base url (for reference)
-# this is the url that when put in as a url will automatically download the ebird prevelances
-# for Oklahoma between the years 1900-2015. You can see 'US-OK' tells the website what country and state,
-#'byear=1900' tells it the early year, and 'eyear=2015' tells it the latest year
-
-#http://ebird.org/ebird/BarChart?cmd=getChart&displayType=download&getLocations=states&states=US-OK&bYear=1900&eYear=2015&bMonth=1&eMonth=12&reportType=location&parentState=US-OK
-
-#using the download.file() how can we get it to download the file we want, no matter the input?
-states<-'OK'
-years<-2008
-
-####################################################################
-url1<-paste0('http://ebird.org/ebird/BarChart?cmd=getChart&displayType=download&getLocations=states&states=US-',
-             states,
-             '&bYear=',
-              years, 
-              '&eYear=',
-              years,
-             '&bMonth=1&eMonth=12&reportType=location&parentState=US-',
-              states
-             ) 
-download.file(url1,paste0('eBird_',states,'_',years))
-###ok that seems to work, now luckily I already know how to read these files
-data<-read.delim(paste0('eBird_',states,'_',years),skip=14,header=F,row.names=1)[,1:48]
-head(data)
-colnames(data)<-paste0(rep(1:12,each=4),'.',1:4)   ###renames the columns in a manner we want
-write.csv(data,paste0('eBird_',states,'_',years,'.csv'))   ###writes the file as a csv, and names it how we want
-file.remove(paste0('eBird_',states,'_',years))  ### a very dangerous function, you need to know exactly what youre refering too, but this removes the .txt file originally downloaded
-
-###################
-#so this is great! we did it once! Now we just have to loop it, and it will do it for all of our inputs
-############################
-#####new code###############
-#####variables####################################################
-states<-c('OK','TX')
-years<-c(2008:2014)
-##################################################################
-for(i in states){
-  for(p in years){
-#base url (for reference)
-#http://ebird.org/ebird/BarChart?cmd=getChart&displayType=download&getLocations=states&states=US-OK&bYear=1900&eYear=2015&bMonth=1&eMonth=12&reportType=location&parentState=US-OK
-#using the download.file() how can we get it to download the file we want, no matter the input?
-#lets start by just doing it once, we can create the for loop later
-url1<-paste0('http://ebird.org/ebird/BarChart?cmd=getChart&displayType=download&getLocations=states&states=US-',
-             i,
-             '&bYear=',
-             p, 
-             '&eYear=',
-             i,
-             '&bMonth=1&eMonth=12&reportType=location&parentState=US-',
-             p
-              )  ###end of paste
-download.file(url1,paste0('eBird_',i,'_',p))
-
-data<-read.delim(paste0('eBird_',i,'_',p),skip=14,header=F,row.names=1)[,1:48]
-colnames(data)<-paste0(rep(1:12,each=4),'.',1:4)
-write.csv(data,paste0('eBird_',i,'_',p,'.csv'))
-file.remove(paste0('eBird_',i,'_',p))  ### a very dangerous function, you need to know exactly what youre refering too
-} #i loop
-} #p loop
-
-#########################################
-##we could even use another for loop, or store it as a list, to then combine all these files into one
-# giant file. From here the possibilites are endless!
-#########################################
-##############end #######################

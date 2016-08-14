@@ -179,21 +179,8 @@ ct - earlytime
 ct > earlytime
 ct == earlytime
 
-
-#########################
-## Paste Functions
-#########################
-
-# paste strings any data classes together into one long character string, each seperated by a space
-
-name<-'Auriel'
-paste('Hello, world. My name is',name )   
-
-# this is useful for error messages
-paste0(name,'_',Sys.Date())
-
-paste0(name,'_',Sys.Date(),'_',1:10) 
-
+######################
+## GREPL
 ####################
 grepl('Af',gapminder$country) # returns TRUE and FALSEs, which we can feed into filter()
 
