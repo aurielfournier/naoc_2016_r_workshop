@@ -1,5 +1,5 @@
 ###Introduction and refreshers for R
-# by - Matt Boone (2015) & Auriel Fournier (2015)
+# By - Matt Boone (2015) & Auriel Fournier (2015)
 # Modified by Auriel Fournier for 2016 NAOC Workshop
 
 ####################################
@@ -18,30 +18,30 @@ library(ggplot2)
 data(gapminder)
 head(gapminder)   
 
+# Explain What Pipes are %>%
+
+# Explain the verbs of dplyr
+
 #########################
 ## Filtering
 #########################
 
-test<- gapminder %>%
+gapminder %>%
         filter(continent=='Europe',
-               year==1987) 
-summary(test)
+               year==1987)
 
-
-test<- gapminder %>%
+gapminder %>%
   filter(continent=='Europe',
          year==1987) %>% 
         select(country,lifeExp,gdpPercap)
-summary(test)
 
 # the "|" means 'or' in R
-test <- gapminder %>%
-      filter(continent=="Europe"|continent=="Asia") 
+gapminder %>%
+      filter(continent=="Europe"|continent=="Asia") %>% distinct(continent)
 
 # the "&" means "and" in R
-test <- gapminder %>%
-          filter(year>=1987&year<=2002) 
-summary(test)
+gapminder %>%
+          filter(year>=1987&year<=2002) %>% distinct(year)
 
 #########################
 # Match     %in%   
@@ -50,8 +50,8 @@ summary(test)
 sub_countries <- c("Afghanistan","Australia", "Zambia")
 
 
-test <- gapminder %>%
-          filter(country %in% sub_countries)
+gapminder %>%
+          filter(country %in% sub_countries) %>% distinct(country)
 
 #########################
 ## GROUPING
@@ -73,29 +73,25 @@ gapminder %>%
 
 # What is the median life expenctancy and population for each country in Asia in 1988
 
-
-
 #########################
 ## MUTATE
 #########################
 
-(mgap <- gapminder %>% 
+(mgap <- gapminder %>%  
   mutate(country_continent = paste0(country,"_",continent)) %>%
    select(year, lifeExp, pop, gdpPercap, country_continent))
 
 # or
 
 gapminder %>%
-  mutate(example = ifelse(country == "United States","Yes","No"))
-
-
+  mutate(example = ifelse(country == "United States","Yes","No")) 
 
 ########################
 ## Separate
 ########################
 
 mgap %>% 
-  separate(country_continent, sep="_", into=c("country","continent"))
+  separate(country_continent, sep="_", into=c("country","continent")) 
 
 # or
 
@@ -106,44 +102,41 @@ mgap %>%
 ## Joins
 ########################
 
-# for no reason other than the awesomeness of star wars we are going to join our data set with another dataset indicating whether or not star wars had bene released yet in that year
+# for no reason other than the awesomeness of star wars (bc a bird conference isn't nerdy enough) 
+# we are going to join our data set with another dataset 
+# indicating whether or not the original star wars had been released yet in that year
 
-new_dat <- data.frame(year=c(unique(gapminder$year)[2:10],2012), star_wars_released=c("No","No","No","No","YES","YES","YES","YES","YES","YES"))
+star_wars_dat <- data.frame(year=c(unique(gapminder$year)[2:10],2012), star_wars_released=c("No","No","No","No","YES","YES","YES","YES","YES","YES"))
 
 # you will notice this does not include 1952, 2002 and 2007
 
-(fully_joined <- full_join(gapminder, new_dat, by="year"))
-
-unique(fully_joined$year)
+full_join(gapminder, star_wars_dat, by="year") %>% distinct(year)
 
 # we have everything, and NAs are inserted for years where things don't exist
 
-(only_right_joined <- right_join(gapminder, new_dat, by="year"))
-
-unique(only_right_joined$year)
+right_join(gapminder, star_wars_dat, by="year") %>% distinct(year)
 
 # notice taht 1952, 2002, 2007 are missing, bc they don't exist in new_dat
 
-(only_left_joined <- left_join(gapminder, new_dat, by="year"))
-
-unique(only_left_joined$year)
+left_join(gapminder, star_wars_dat, by="year") %>% distinct(year)
 
 # notice that 2012 is missing, bc it doesn't exist in gapminder
 
-(inner_joined_only <- inner_join(gapminder, new_dat, by="year"))
-
-unique(inner_joined_only$year)
+inner_join(gapminder, star_wars_dat, by="year") %>% distinct(year)
 
 # only things that are in common
-
 
 
 #####################################
 ## CHALLENGE
 #####################################
 
-# Calculate the average life expectancy in 2002 of 2 randomly selected countries for each continent. Then arrange the continent names in reverse order. Hint: Use the dplyr functions arrange() and sample_n(), they have similar syntax to other dplyr functions.
-
+# Calculate the average life expectancy in 2002 
+# of 2 randomly selected countries for each continent. 
+# Then arrange the continent names in reverse order. \
+# Hint: Use the dplyr functions arrange() and sample_n(), 
+# they have similar syntax to other dplyr functions.
+# ?arrange ?sample_n for help
 
 
 ########################
@@ -161,9 +154,9 @@ Sys.time()
 ## Good Resource on what letters = what in format
 # https://stat.ethz.ch/R-manual/R-devel/library/base/html/strptime.html
 
-dt<-as.Date(Sys.time(),format='%Y-%m-%d')
-ct<-as.POSIXct(Sys.time(),format='%Y-%m-%d %H%M%D')
-lt<-as.POSIXlt(Sys.time(),format='%Y-%m-%d %H%M%D')
+(dt<-as.Date(Sys.time(),format='%Y-%m-%d'))
+(ct<-as.POSIXct(Sys.time(),format='%Y-%m-%d %H%M%D'))
+(lt<-as.POSIXlt(Sys.time(),format='%Y-%m-%d %H%M%D'))
 
 # whats great is we can now do math on time
 
@@ -202,23 +195,16 @@ paste0(name,'_',Sys.Date())
 paste0(name,'_',Sys.Date(),'_',1:10) 
 
 ####################
-#grepl searches for an entry in a vector
-grepl('Af',gapminder$country)   
+grepl('Af',gapminder$country) # returns TRUE and FALSEs, which we can feed into filter()
 
-#this searches for the term 'United' in each word in our country vector
+gapminder %>%
+    filter(grepl("Af", country)) %>% summary()
 
-test <- gapminder %>%
-    filter(grepl("Af", country))
-summary(test)
-
-test <- gapminder %>%
-  filter(grepl('^Af',country))
-summary(test)
+gapminder %>%
+  filter(grepl('^Af',country)) %>% summary()
 
 #####################################
 ## CHALLENGE
 #####################################
 
 ## Median and Mean Life Exp for all Countiries that being with "Ma" for the years 1990-1997 
-
-

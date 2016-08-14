@@ -205,7 +205,7 @@ for(i in values){
 # all optimally. There is a point when it is best to start learning other languages
 # like C in order to do the more complex things. But you likely won't get ot this point!
 #
-#A quick aside on functions
+# A quick aside on functions
 # We're going to move into the territory where we start using loops and writing programs
 # R's strength is in it's function interface, where we write functions, and then can
 # easily run a long piece of code that's wrapped in a function
@@ -295,7 +295,9 @@ result <- data %>%
             gather("quarter_month","value")
 
 
-ggplot(data=result, aes(x=quarter_month, y=value)) + geom_point()
+ggplot(data=result, aes(x=quarter_month, y=value)) + 
+  geom_point()
+
 
 
 # 2. Make a dynamic and static variable list at the header of a code. This is essentially what
