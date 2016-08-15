@@ -18,7 +18,7 @@ library(ggplot2)
 data(gapminder)
 head(gapminder)   
 
-# Explain What Pipes are %>%
+# Explain What Pipes are %>% 
 
 # Explain the verbs of dplyr
 
@@ -37,7 +37,8 @@ gapminder %>%
 
 # the "|" means 'or' in R
 gapminder %>%
-      filter(continent=="Europe"|continent=="Asia") %>% distinct(continent)
+      filter(continent=="Europe"|continent=="Asia") %>% 
+      distinct(continent)
 
 # the "&" means "and" in R
 gapminder %>%
@@ -59,7 +60,7 @@ gapminder %>%
 
 gapminder %>%
   group_by(continent) %>%
-  summarize(mean=mean(lifeExp))
+  summarize(mean = mean(lifeExp))
 
 
 gapminder %>% 
@@ -67,11 +68,20 @@ gapminder %>%
   summarize(mean=mean(lifeExp))
 
 
+# https://github.com/aurielfournier/naoc_2016_r_workshop
+
 #########################################
 ## CHALLENGE
 #########################################
 
-# What is the median life expenctancy and population for each country in Asia in 1988
+# What is the median life expenctancy 
+# and population for each country in Asia in 1987
+
+new_data <- gapminder %>% 
+  filter(continent == "Asia" & year == 1987) %>%
+  group_by(country) %>%
+  summarise(medianL = median(lifeExp),
+            medianP = median(pop))
 
 #########################
 ## MUTATE
@@ -84,19 +94,24 @@ gapminder %>%
 # or
 
 gapminder %>%
-  mutate(example = ifelse(country == "United States","Yes","No")) 
+  mutate(example = ifelse(country == "United States","Yes","No")) %>%
+  select(example)
 
 ########################
 ## Separate
 ########################
 
 mgap %>% 
-  separate(country_continent, sep="_", into=c("country","continent")) 
+  separate(country_continent, 
+           sep="_", 
+           into=c("country",
+                  "continent")) 
 
 # or
 
 mgap %>% 
-  separate(year, sep=-3, into=c("century","year"))
+  separate(year, sep=2, 
+           into=c("century","year"))
 
 ########################
 ## Joins
@@ -106,10 +121,11 @@ mgap %>%
 # we are going to join our data set with another dataset 
 # indicating whether or not the original star wars had been released yet in that year
 
-star_wars_dat <- data.frame(year=c(unique(gapminder$year)[2:10],2012), star_wars_released=c("No","No","No","No","YES","YES","YES","YES","YES","YES"))
+star_wars_dat <- data.frame(year=c(unique(gapminder$year)[2:10],2012), 
+                            star_wars_released=c("No","No","No","No","YES","YES","YES",
+                                                 "YES","YES","YES"))
 
 # you will notice this does not include 1952, 2002 and 2007
-
 full_join(gapminder, star_wars_dat, by="year") %>% distinct(year)
 
 # we have everything, and NAs are inserted for years where things don't exist
@@ -138,6 +154,22 @@ inner_join(gapminder, star_wars_dat, by="year") %>% distinct(year)
 # they have similar syntax to other dplyr functions.
 # ?arrange ?sample_n for help
 
+gapminder %>%
+  filter(year==2002) %>%
+  group_by(continent) %>%
+  sample_n(2) %>%
+  assign("countries_selected",.) %>%
+  group_by(country, continent) %>%
+  summarize(mean=mean(lifeExp)) %>%
+  arrange(., desc(continent))
+
+part1 <- gapminder %>%
+  filter(year==2002) %>%
+  group_by(continent) %>%
+  sample_n(2)
+
+part2 <- part1 %>% summarize(mean=mean(lifeExp)) %>%
+  arrange(., desc(continent))
 
 ########################
 ## Dates and Times

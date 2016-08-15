@@ -1,7 +1,7 @@
 ######################################
 ## GGPLOT SECTION OF NAOC WORKSHOP
 ######################################
-
+# https://github.com/aurielfournier/naoc_2016_r_workshop
 # use install.packages() if you don't have these already
 library(dplyr)
 library(ggplot2) 
@@ -21,7 +21,8 @@ library(gapminder)
 
 #Let's start off with an example:
 
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
+ggplot(data = gapminder, 
+       aes(x = gdpPercap, y = lifeExp)) +
   geom_point()
 
 #So the first thing we do is call the `ggplot` function. This function lets R
@@ -41,7 +42,8 @@ ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
   
 #  By itself, the call to `ggplot` isn't enough to draw a figure:
 
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp))
+ggplot(data = gapminder, 
+       aes(x = gdpPercap, y = lifeExp))
 
 #We need to tell `ggplot` how we want to visually represent the data, which we
 #do by adding a new **geom** layer. In our example, we used `geom_point`, which
@@ -54,7 +56,8 @@ ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
 # Modify the example so that the figure visualise how life expectancy has
 # changed over time:
 
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) + 
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp)) + 
   geom_point()
 
 # Hint: the gapminder dataset has a column called "year", which should appear
@@ -76,7 +79,9 @@ ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
 #Using a scatterplot probably isn't the best for visualising change over time.
 #Instead, let's tell `ggplot` to visualise the data as a line plot:
   
-ggplot(data = gapminder, aes(x=year, y=lifeExp, by=country, color=continent)) +
+ggplot(data = gapminder, 
+       aes(x=year, y=lifeExp, 
+            by=country,color=continent)) +
   geom_line()
 
 #Instead of adding a `geom_point` layer, we've added a `geom_line` layer. We've
@@ -86,14 +91,19 @@ ggplot(data = gapminder, aes(x=year, y=lifeExp, by=country, color=continent)) +
 #But what if we want to visualise both lines and points on the plot? We can
 #simply add another layer to the plot:
   
-ggplot(data = gapminder, aes(x=year, y=lifeExp, by=country, color=continent)) +
-  geom_line() + geom_point()
+ggplot(data = gapminder, 
+       aes(x=year, y=lifeExp, 
+           by=country, color=continent)) +
+  geom_line() + 
+  geom_point()
 
 #It's important to note that each layer is drawn on top of the previous layer. In
 #this example, the points have been drawn *on top of* the lines. Here's a
 #demonstration:
   
-ggplot(data = gapminder, aes(x=year, y=lifeExp, by=country)) +
+ggplot(data = gapminder, 
+       aes(x=year, y=lifeExp, 
+           by=country)) +
   geom_line(aes(color=continent)) + 
   geom_point()
 
@@ -110,7 +120,9 @@ ggplot(data = gapminder, aes(x=year, y=lifeExp, by=country)) +
 #  Ggplot also makes it easy to overlay statistical models over the data. To
 #demonstrate we'll go back to our first example:
 
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color=continent)) +
+ggplot(data = gapminder, 
+       aes(x = gdpPercap, 
+           y = lifeExp, color=continent)) +
   geom_point()
 
 #Currently it's hard to see the relationship between the points due to some strong
@@ -120,9 +132,12 @@ ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color=continent)) +
 #points, using the *alpha* funtion, which is especially helpful when you have
 #a large amount of data which is very clustered.
 
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
-  geom_point(alpha = 0.5) + 
-  scale_x_log10()
+ggplot(data = gapminder, 
+       aes(x = gdpPercap, 
+           y = lifeExp)) +
+  geom_point(alpha = 0.5, 
+             aes(color=continent)) + 
+  scale_x_log10()  
 
 #The `log10` function applied a transformation to the values of the gdpPercap
 #column before rendering them on the plot, so that each multiple of 10 now only
@@ -134,10 +149,11 @@ ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
 #We can fit a simple relationship to the data by adding another layer,
 #`geom_smooth`:
   
-ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
-  geom_point() + 
+ggplot(data = gapminder, 
+  aes(x = gdpPercap, y = lifeExp)) +
+  geom_point(alpha=0.5) + 
   scale_x_log10() + 
-  geom_smooth(method="lm")
+  geom_smooth(method="lm", aes(by=continent, size=1.5))
 
 #We can make the line thicker by *setting* the **size** aesthetic in the
 #`geom_smooth` layer:
@@ -181,9 +197,12 @@ gapminder %>%
 #by adding a layer of **facet** panels. Focusing only on those countries with
 #names that start with the letter "A" or "Z".
 
-ggplot(data=gapminder, aes(x = year, y = lifeExp, group=country)) +
+ggplot(data=gapminder, 
+       aes(x = year, 
+           y = lifeExp, 
+           group=country)) +
   geom_line() + 
-  facet_wrap(~continent)
+  facet_wrap(~continent, ncol=2)
 
 #The `facet_wrap` layer took a "formula" as its argument, denoted by the tilde
 #(~). This tells R to draw a panel for each unique value in the country column
@@ -200,14 +219,16 @@ ggplot(data=gapminder, aes(x = year, y = lifeExp, group=country)) +
 #for changing the axis labels. To change the legend title, we need to use the
 #**scales** layer.
 
-ggplot(data = gapminder, aes(x = year, y = lifeExp, group=country)) +
+ggplot(data = gapminder, 
+       aes(x = year, y = lifeExp, group=country,
+           color=continent)) +
     geom_line() + 
     facet_wrap( ~continent, ncol=2) +
     xlab("Year") + 
     ylab("Life expectancy") + 
     ggtitle("Figure 1") +
     scale_colour_discrete(name="Continent") +
-    theme(axis.text.x=element_text(ang=90))
+    theme_few()
 
 
 #This is a taste of what you can do with `ggplot2`. RStudio provides a
@@ -230,12 +251,19 @@ ggplot(data = gapminder, aes(x = year, y = lifeExp, group=country)) +
 
  ## Challenge 5 
 
-# Create a density plot of GDP per capita, filled by continent.
-  # geom_density
+# Create a density plot of GDP per capita, 
+# filled by continent.
+# geom_density
 
 # Advanced:
-#  - Add a facet layer to panel the density plots by year.
-
+#  - Add a facet layer to panel 
+# the density plots by year.
+ggplot(data=gapminder, 
+       aes(x=gdpPercap, 
+          fill=continent))+
+    geom_density()+
+    facet_wrap(~continent)+
+    theme_krementz()
 
   
 
@@ -249,19 +277,26 @@ display.brewer.all(n=NULL, type="all", select=NULL, exact.n=TRUE,colorblindFrien
   
 mypalette<-brewer.pal(5,"Greens")
 
-ggplot(gapminder, aes(x=continent, y=lifeExp, fill=continent)) + 
+ggplot(gapminder, aes(x=continent, 
+                      y=lifeExp, 
+                      fill=continent)) + 
   geom_boxplot()+ 
   ggtitle("TITLE HERE")+ 
   xlab("text here")+ 
-  ylab("text here") + scale_fill_manual(values=mypalette)
+  ylab("text here") + 
+  scale_fill_manual(values=mypalette)
 
 mypalette<-brewer.pal(5,"Set2")
 
-ggplot(gapminder, aes(x=continent, y=lifeExp, fill=continent)) + 
+mypalette[2] <- "#000000"
+
+ggplot(gapminder, aes(x=continent, y=lifeExp, 
+                      fill=continent)) + 
   geom_boxplot()+ 
   ggtitle("TITLE HERE")+ 
   xlab("text here")+ 
-  ylab("text here") + scale_fill_manual(values=mypalette)
+  ylab("text here") + 
+  scale_fill_manual(values=mypalette)
 
 # you can always add onto the aesthetics later by adding an additional aes command. 
 ggplot(gapminder, aes(x=gdpPercap, y=lifeExp))+
@@ -274,19 +309,22 @@ ggplot(gapminder, aes(x=gdpPercap, y=lifeExp))+
 ## Saving, Stacking and Rearranging Graphs (gridExtra)
 ###################################
 
-(a <- ggplot(gapminder[gapminder$continent=="Oceania",], aes(x=year, y=lifeExp, group=country)) + 
+(a <- ggplot(gapminder[gapminder$continent=="Oceania",], 
+             aes(x=year, y=lifeExp, group=country)) + 
   geom_line())
 
-(b <- ggplot(gapminder[gapminder$continent=="Oceania",], aes(x=year, y=gdpPercap, group=country)) + 
+(b <- ggplot(gapminder[gapminder$continent=="Europe",], 
+             aes(x=year, y=gdpPercap, group=country)) + 
   geom_line())
-
 
 #ggsave(a, file="filenamehere.extension")
-
-ggsave(a, file="~/../Desktop/example_file.jpeg")
+ggsave(a, file="~/../Desktop/example_file.jpeg", 
+       height=3, width=3, units="cm", dpi=600)
 
 grid.arrange(a,b,a,b,nrow=2)
 
-png("~/../Desktop/x.png")
-grid.arrange(a,b,nrow=2)
+png("~/../Desktop/x.png", height=12, width=12, units="cm", res=300)
+
+grid.arrange(a,b,a,b,nrow=2)
+
 dev.off()
