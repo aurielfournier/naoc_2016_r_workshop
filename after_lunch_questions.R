@@ -7,7 +7,8 @@ ggplot(data=gapminder,
            group=country)) +
   geom_line() + 
   facet_wrap(~continent, ncol=2,scales='free')+
-  scale_x_continuous(limits=c(1952,2007)) + scale_y_continuous(limits=c(20,100))
+  scale_x_continuous(limits=c(1952,2007)) + 
+  scale_y_continuous(limits=c(20,100))
 
 # by setting scales='free' in facet_wrap we are telling it to let the scales vary between facets
 # and so it has to label all of them

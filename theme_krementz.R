@@ -1,6 +1,6 @@
 #' A theme that Krementz seems to not hate too much
 #' 
-#' THis function makes ggplots look in a way that my adviser will hopefully not hate
+#' This function makes ggplots look in a way that my adviser will hopefully not hate
 #' there are no arguments
 #' @keywords ggplot2 
 #' @export
@@ -14,8 +14,8 @@ theme_krementz <- function(){
         axis.title.y=element_text(size=20),
         plot.background = element_blank(),
         panel.border=element_blank(),
-        panel.grid.major= element_line(colour=NA), 
-        panel.grid.minor=element_line(colour=NA),
+        panel.grid.major= element_blank(), 
+        panel.grid.minor=element_blank(),
         title=element_text(size=20),
         panel.background = element_rect(fill = "white"),
         axis.line.x=element_line(colour="black"),

@@ -4,12 +4,15 @@
 # all credit to Hilary @hspter 
 
 # Step 0
-library("devtools")
-devtools::install_github("klutometis/roxygen")
+# library("devtools")
+# devtools::install_github("klutometis/roxygen")
+# library(roxygen2)
+
+install.packages("roxygen2")
+library(devtools)
 library(roxygen2)
 
 # step 1
-
 #setwd("parent_directory")
 create("package")
 
@@ -33,6 +36,7 @@ rail_function <- function(love=TRUE){
 # you can also store data in a package, which is super handy. to do this 
 
 some_random_data <- data.frame(a=1:10, b=rep(200,10),c="BIRDS RULE")
+
 save(some_random_data, file="~/naoc_2016_r_workshop/package/data/some_random_data.rda")
 
 # Step 3 
@@ -76,6 +80,7 @@ document()
 setwd("..")
 install("package")
 
+library(package)
 data("some_random_data")
 rail_function()
 
@@ -99,3 +104,4 @@ rail_function()
 # examples of other people's personal R packages
 # https://github.com/dwinter/MoreUtils/tree/master/R
 # https://github.com/eheisman/hydroutils/tree/master/R & # https://t.co/PGCsTXZJuI
+# https://github.com/aurielfournier/rel

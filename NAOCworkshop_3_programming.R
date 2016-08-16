@@ -38,8 +38,10 @@ tt   #is our random number
 # we can also tell it to do something if the statement IS NOT true, by then telling it 'else' and giving it
 # a set of things to do if the statement was not true
 if(tt>5){
-  print('number is greater than 5') } else {
+  print('number is greater than 5') }else {
     print('number is less than 5')}
+
+ifelse(tt>5,'number is greater than 5',"number is less than 5")
 
 # so this will tell us IF our random number is greater than 5, tell us, if not (or if else) tell us the number is less than 5
 
@@ -109,6 +111,8 @@ for(i in 1:10){
   print(data[i,1]+10)
 }   ###loops through all the rows in column 1 and adds 5 to that value
 
+data[,1] <- 100
+
 for(i in 1:10){
   data[i,2]<-data[i,1]+10
 }   ###does the same thing but stores the value in the correct row in column 2
@@ -139,16 +143,20 @@ paste0('hd',1:10)   ### automatically adds the numbers 1 through 10 onto the wor
 # and then prints out whether this value is cold depending on if the resulting value is less 
 # than 50 degrees farenheit. 
 # this is because Matt, who wrote this, is from Texas, and hates cold
-# The function for this conversion is C*(9/5) +32
+# The function for this conversion is 
+# C*(9/5) +32
 # use : for, if, print, and paste0
+# https://github.com/aurielfournier/naoc_2016_r_workshop
 
 values<-c(30,25,6)
 
-for(i in values){
-  d<-i*9/5 +32
-  ifelse(d<50,print(paste0(d,' degrees is cold')),print(d))
+for(i in values){  d<-i*9/5 +32;  ifelse(d<50,print(paste0(d,' degrees is cold')),print(d))
 }
 
+for(i in values){
+  d<-i*9/5 +32
+  if(d<50){print(paste0(d,' degrees is cold'))}
+}
 
 
 ######################################################################
@@ -172,19 +180,21 @@ for(i in values){
 # function() parenthesis
 #
 
-temp_fun<-function(temp_values){
+temp_fun <- function(temp_values){ 
 for(i in temp_values){
   d<-i*9/5 +32
-  ifelse(d<50,print(paste0(d,' degrees is cold')), print(d))
-  rm(temp_values)
-}}
+  ifelse(d<50,
+         print(paste0(d,' degrees is cold')), 
+         print(paste0(d," degrees is hot")))
+} 
+rm(temp_values)
+}
    
 
 #this runs our for loop for whatever vector of values you want
 temp_fun(1)
 temp_fun(c(1:100))
-
-
+temp_fun("green")
 #################################################################################
 #Programming
 # Haven't we been programming this whole time?
@@ -241,14 +251,11 @@ dat %>% head
 dat[dat$breeder==1 & dat$passerine==1,grepl('^X',colnames(dat))]
 
 result <- dat %>% 
-            filter(breeder==1,
-                    passerine==1) %>%
-            select(contains('X')) %>%
-            gather("quarter_month","value")
-
-
+        filter(breeder==1,passerine==1) %>%
+            select(group,contains('X')) %>%
+            gather("quarter_month","value",-group)
 ggplot(data=result, aes(x=quarter_month, y=value)) + 
-  geom_point()
+  geom_point()+facet_wrap(~group)
 
 
 # 2. Make a dynamic and static variable list at the header of a code. This is essentially what
@@ -269,11 +276,14 @@ paste0('hello','world')
 paste0('hello',' ','world')  # if you notice we told it to put a space (' ') between Hello and World
 
 # say we want  to have a program that you give its name, and it tells you hello
-name<-'Matt'
+name<-c('Matt',"Auriel")
 paste0('hello, ',name,' how are you?')
 
 ##we can write this as a function easily
-foo<-function(name){paste0('hello, ',name,' how are you')}
+foo<-function(name){
+  paste0('hello, ',name,' how are you')
+}
+
 foo(name='matt')
 # that was a tangent, lets move forward
 
@@ -311,8 +321,16 @@ data<-read.csv(paste0(folder,'/','scaretotal_',name,'_',month,'.csv'))
 #task4. I want you to write a function or a for loop that reads in all of the files
 # for MikeW and stores them in a list()
 
+
+month<-c('March','April')
+
 ##variables#####
 our.list<-list()
+
+  for(p in month){
+our.list[[paste0('MikeW_',p)]]<-read.csv(paste0(folder,'/','scaretotal_MikeW','_',p,'.csv'))
+  } 
+
 # now lets write one that reads in all the of files for march
 
 ##now lets put it all together, lets make it so reads in all the files for both Mike and James for
@@ -330,11 +348,22 @@ for(i in name){
   
 }   ###end i loop
 
-summary(our.list)
 
 # notice how not only are the end brackets labeled 
 # but we're keeping the loops indented appropriately to show that one is nested inside of the other
 # this is not _required_ by R, but it does make things easier. 
+
+#### How to look over files with list.files()
+our.files <- list()
+
+files <- list.files("Monstersinc/",pattern=".csv")
+
+for(i in files){
+  our.files[[i]] <- read.csv(paste0("Monstersinc/",i))
+}
+
+
+
 
 # 5. Start simple, and build to more complex. Don't think about the big picture
 # think about the individual steps. If you can do each individual step, then you
@@ -407,19 +436,12 @@ ci<-.01         ###confidence
 CI.fun<-function(data,ci){
   if(ci>abs(1)){print("You can't have a probability greater than 1 you goof!")}else{
   sd.data<-sd(data)
-  
   n<-length(data)
-  
   sem<-sd.data/n
-  
   tvalue<-qt(ci,(length(data)-1))
-  
   mean.data<-mean(data)
-  
   upper<-mean.data + sem*tvalue
-  
   lower<-mean.data - sem*tvalue
-  
   print(paste0('your upper bound is: (',upper, ') and your lower bound is: (', lower,"), and your mean is: (", mean.data,')'))
   list1<-list(upperbound=upper,lowerbound=lower,mean=mean.data)
   }}
