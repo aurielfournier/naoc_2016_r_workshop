@@ -66,7 +66,7 @@ save(some_random_data, file="~/naoc_2016_r_workshop/package/data/some_random_dat
 #'   \item{c}{proof that BIRDS RULE}
 #' }
 #' @source NAOC 2016 
-
+"some_random_data"
 
 # step 4
 
